@@ -43,13 +43,15 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
+    id            String     @id @default(cuid())
     name          String?
-    email         String?   @unique
+    email         String?    @unique
     emailVerified DateTime?
     image         String?
     accounts      Account[]
     sessions      Session[]
+    templates     Template[]
+    uploads       Upload[]
 }
 
 model VerificationToken {
@@ -58,4 +60,41 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Template {
+    id               String          @id @default(cuid())
+    name             String
+    description      String?
+    createdAt        DateTime        @default(now())
+    updatedAt        DateTime        @updatedAt
+    userId           String?
+    user             User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
+    defaultAiModel   String?
+    isGlobal         Boolean         @default(false)
+    documentUploadId String?         @unique
+    fields           TemplateField[]
+    documentUpload   Upload?         @relation(name: "TemplateDocumentUpload", fields: [documentUploadId], references: [id])
+}
+
+model TemplateField {
+    id          String   @id @default(cuid())
+    key         String
+    description String?
+    type        String
+    required    Boolean  @default(false)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    templateId  String
+    template    Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
+}
+
+model Upload {
+    id        String    @id @default(cuid())
+    key       String?   @unique
+    url       String?   @unique
+    createdAt DateTime  @default(now())
+    userId    String?
+    user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    template  Template? @relation(name: "TemplateDocumentUpload")
 }

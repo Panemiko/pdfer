@@ -17,34 +17,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { availableModels } from "@/lib/config";
 import { cn } from "@/lib/utils";
-
-const models = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
+import { useAtom } from "jotai";
+import { chatOptionsAtom } from "./store";
 
 export function ModelSelector() {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+  const [chatOptions, setChatOptions] = useAtom(chatOptionsAtom);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -53,10 +33,11 @@ export function ModelSelector() {
           variant="ghost"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-[200px] has-[>svg]:px-1 justify-between"
         >
-          {value
-            ? models.find((framework) => framework.value === value)?.label
+          {chatOptions.modelId
+            ? availableModels.find((model) => model.id === chatOptions.modelId)
+                ?.name
             : ""}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -65,24 +46,26 @@ export function ModelSelector() {
         <Command>
           <CommandInput placeholder="Select model" />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandEmpty>No model found.</CommandEmpty>
             <CommandGroup>
-              {models.map((framework) => (
+              {availableModels.map((model) => (
                 <CommandItem
-                  key={framework.value}
-                  value={framework.value}
+                  key={model.id}
+                  value={model.id}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
+                    setChatOptions({ ...chatOptions, modelId: currentValue });
                     setOpen(false);
                   }}
                 >
                   <CheckIcon
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === framework.value ? "opacity-100" : "opacity-0",
+                      chatOptions.modelId === model.id
+                        ? "opacity-100"
+                        : "opacity-0",
                     )}
                   />
-                  {framework.label}
+                  {model.name}
                 </CommandItem>
               ))}
             </CommandGroup>

@@ -1,9 +1,12 @@
+import { ourFileRouter } from "@/server/uploadthing";
 import "@/styles/globals.css";
 
+import { TRPCReactProvider } from "@/trpc/react";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { Provider } from "jotai";
 import { type Metadata } from "next";
 import { Inter } from "next/font/google";
-
-import { TRPCReactProvider } from "@/trpc/react";
+import { extractRouterConfig } from "uploadthing/server";
 
 export const metadata: Metadata = {
   title: "PDFer",
@@ -22,7 +25,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable}`}>
       <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+        <TRPCReactProvider>
+          <Provider>{children}</Provider>
+        </TRPCReactProvider>
       </body>
     </html>
   );

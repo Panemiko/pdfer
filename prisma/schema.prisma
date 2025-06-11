@@ -111,6 +111,7 @@ model Chat {
     template   Template? @relation(fields: [templateId], references: [id], onDelete: Cascade)
     title      String?
     messages   Message[]
+    model      String?
 }
 
 model Message {

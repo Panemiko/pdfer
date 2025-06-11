@@ -1,6 +1,6 @@
+import { Initializer } from "@/components/chat/initializer";
+import { Prompter } from "@/components/chat/prompter";
 import { api } from "@/trpc/server";
-import { Initializer } from "./_chat/initializer";
-import { Prompter } from "./_chat/prompter";
 
 export default async function Page() {
   const globalTemplates = await api.template.listGlobalTemplates();

@@ -20,11 +20,16 @@ import {
 import { availableModels } from "@/lib/config";
 import { cn } from "@/lib/utils";
 import { useAtom } from "jotai";
-import { chatOptionsAtom } from "./store";
+import { Skeleton } from "../ui/skeleton";
+import { chatStateAtom } from "./store";
 
 export function ModelSelector() {
   const [open, setOpen] = React.useState(false);
-  const [chatOptions, setChatOptions] = useAtom(chatOptionsAtom);
+  const [chatState, setChatState] = useAtom(chatStateAtom);
+
+  if (!chatState) {
+    return <Skeleton className="h-9 w-[200px]" />;
+  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -33,10 +38,10 @@ export function ModelSelector() {
           variant="ghost"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] has-[>svg]:px-1 justify-between"
+          className="w-[200px] justify-between has-[>svg]:px-1"
         >
-          {chatOptions.modelId
-            ? availableModels.find((model) => model.id === chatOptions.modelId)
+          {chatState.model
+            ? availableModels.find((model) => model.id === chatState.model)
                 ?.name
             : ""}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -53,14 +58,14 @@ export function ModelSelector() {
                   key={model.id}
                   value={model.id}
                   onSelect={(currentValue) => {
-                    setChatOptions({ ...chatOptions, modelId: currentValue });
+                    setChatState({ ...chatState, model: currentValue });
                     setOpen(false);
                   }}
                 >
                   <CheckIcon
                     className={cn(
                       "mr-2 h-4 w-4",
-                      chatOptions.modelId === model.id
+                      chatState.model === model.id
                         ? "opacity-100"
                         : "opacity-0",
                     )}

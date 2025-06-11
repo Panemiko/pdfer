@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const templateRouter = createTRPCRouter({
   byId: protectedProcedure
@@ -18,4 +18,16 @@ export const templateRouter = createTRPCRouter({
         },
       });
     }),
+
+  listGlobalTemplates: publicProcedure.query(async ({ ctx }) => {
+    return ctx.db.template.findMany({
+      where: {
+        isGlobal: true,
+      },
+      include: {
+        fields: true,
+        documentUpload: true,
+      },
+    });
+  }),
 });

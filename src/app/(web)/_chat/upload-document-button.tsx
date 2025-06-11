@@ -1,13 +1,9 @@
 "use client";
 
 import { UploadButton } from "@/lib/uploadthing";
-import { useAtom } from "jotai";
 import { toast } from "sonner";
-import { documentAtom } from "./store";
 
 export function UploadDocumentButton() {
-  const [document, setDocument] = useAtom(documentAtom);
-
   return (
     <UploadButton
       endpoint="documentUploader"

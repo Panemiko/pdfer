@@ -9,7 +9,12 @@ export const chatStateAtom = atom<
   | null
 >();
 
-export const messagesAtom = atom<RouterOutputs["chat"]["byId"]["messages"]>([]);
+export const messagesAtom = atom<
+  Pick<
+    RouterOutputs["chat"]["byId"]["messages"][0],
+    "content" | "createdAt" | "role" | "id"
+  >[]
+>([]);
 
 export const templateAtom = atom<
   RouterOutputs["chat"]["byId"]["template"] | null

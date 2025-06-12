@@ -13,6 +13,7 @@ export const env = createEnv({
         : z.string().optional(),
     UPLOADTHING_TOKEN: z.string(),
     DATABASE_URL: z.string().url(),
+    GEMINI_API_KEY: z.string(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -35,6 +36,7 @@ export const env = createEnv({
     AUTH_SECRET: process.env.AUTH_SECRET,
     UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
     DATABASE_URL: process.env.DATABASE_URL,
+    GEMINI_API_KEY: process.env.GEMINI_API_KEY,
     NODE_ENV: process.env.NODE_ENV,
   },
   /**

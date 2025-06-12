@@ -1,6 +1,7 @@
 import { templateRouter } from "@/server/api/routers/template";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 import { chatRouter } from "./routers/chat";
+import { messageRouter } from "./routers/message";
 
 /**
  * This is the primary router for your server.
@@ -10,6 +11,7 @@ import { chatRouter } from "./routers/chat";
 export const appRouter = createTRPCRouter({
   template: templateRouter,
   chat: chatRouter,
+  message: messageRouter,
 });
 
 // export type definition of API

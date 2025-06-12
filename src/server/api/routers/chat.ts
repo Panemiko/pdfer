@@ -52,7 +52,9 @@ export const chatRouter = createTRPCRouter({
       const chat = await ctx.db.chat.findUnique({
         where: { id: input.chatId },
         include: {
-          messages: true,
+          messages: {
+            orderBy: { createdAt: "asc" },
+          },
           template: {
             include: {
               fields: true,
@@ -68,5 +70,32 @@ export const chatRouter = createTRPCRouter({
       }
 
       return chat;
+    }),
+  updateTitle: publicProcedure
+    .input(
+      z.object({
+        chatId: z.string().cuid2(),
+        data: z.object({
+          title: z.string().min(1, "Title cannot be empty"),
+        }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const chat = await ctx.db.chat.findUnique({
+        where: { id: input.chatId },
+      });
+
+      if (!chat) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+        });
+      }
+
+      return await ctx.db.chat.update({
+        where: { id: input.chatId },
+        data: {
+          title: input.data.title,
+        },
+      });
     }),
 });

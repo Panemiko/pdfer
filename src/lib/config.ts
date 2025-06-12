@@ -1,4 +1,4 @@
-export type ModelId = "gemini-2.5-flash" | "gpt-4o";
+export type ModelId = "gemini-2.0-flash" | "gpt-4o";
 export type Model = {
   id: ModelId;
   name: string;
@@ -6,7 +6,7 @@ export type Model = {
 
 export const availableModels: Model[] = [
   {
-    id: "gemini-2.5-flash",
+    id: "gemini-2.0-flash",
     name: "Gemini 2.5 Flash",
   },
   {

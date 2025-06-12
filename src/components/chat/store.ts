@@ -15,3 +15,7 @@ export const messagesAtom = atom<Message[]>([]);
 export const templateAtom = atom<
   RouterOutputs["chat"]["byId"]["template"] | null
 >(null);
+
+export const generatedDocumentValuesAtom = atom<Record<string, string> | null>(
+  null,
+);

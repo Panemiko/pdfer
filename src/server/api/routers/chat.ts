@@ -42,6 +42,7 @@ export const chatRouter = createTRPCRouter({
         include: {
           template: {
             include: {
+              documentUpload: true,
               fields: true,
             },
           },

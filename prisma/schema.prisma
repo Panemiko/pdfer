@@ -89,6 +89,11 @@ model TemplateField {
     updatedAt   DateTime @updatedAt
     templateId  String
     template    Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
+    positionX   Int
+    positionY   Int
+    fontSize    Int
+    fontFamily  String
+    fontColor   String
 }
 
 model Upload {

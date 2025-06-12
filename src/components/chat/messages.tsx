@@ -12,7 +12,7 @@ export function Messages() {
   );
 
   return (
-    <div className="absolute top-0 left-[calc(50%+2.5rem)] flex h-full w-full max-w-4xl -translate-x-1/2 flex-col gap-4 overflow-y-auto p-4">
+    <div className="absolute top-0 left-[calc(50%+2.5rem)] flex h-full w-full max-w-4xl -translate-x-1/2 flex-col gap-4 overflow-y-auto p-4 pt-20">
       {messagesFiltered.length === 0 && (
         <div className="text-muted-foreground mt-20 text-center text-sm">
           No messages yet. Feel free to start generating your documents!
@@ -45,10 +45,21 @@ export function Messages() {
                 case "tool-invocation": {
                   const callId = part.toolInvocation.toolCallId;
 
-                  switch (part.toolInvocation.toolName) {
-                    case "askForConfirmation": {
-                      break;
-                    }
+                  if (part.toolInvocation.toolName === "generateDocument") {
+                    return (
+                      <div>
+                        Filling out document with the following values:
+                        <ul className="list-disc pl-5">
+                          {Object.entries(
+                            part.toolInvocation.args as Record<string, string>,
+                          ).map(([key, value]) => (
+                            <li key={key}>
+                              <strong>{key}:</strong> {value}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    );
                   }
                 }
               }

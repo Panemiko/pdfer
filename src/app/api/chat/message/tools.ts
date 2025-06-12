@@ -1,7 +1,20 @@
+import { createZodValidationBasedOnFields } from "@/lib/utils";
+import type { RouterOutputs } from "@/trpc/react";
+import { api } from "@/trpc/server";
 import { tool } from "ai";
 import { z } from "zod";
 
-export async function getTools() {
+export async function getTools({
+  chat,
+  template,
+}: {
+  chat: RouterOutputs["chat"]["byId"];
+  template: RouterOutputs["template"]["byId"];
+}) {
+  if (!chat || !template) {
+    throw new Error("Chat or template not found");
+  }
+
   return {
     updateChatTitle: tool({
       description:
@@ -10,8 +23,21 @@ export async function getTools() {
         title: z.string().min(1, "Title cannot be empty"),
       }),
       async execute({ title }) {
-        console.log("Updating chat title to:", title);
+        await api.chat.updateTitle({
+          chatId: chat.id,
+          data: {
+            title,
+          },
+        });
+
+        return { title };
       },
+    }),
+
+    generateDocument: tool({
+      description:
+        "Generates a document based on the template provided. Fill in the required fields with the provided parameters.",
+      parameters: createZodValidationBasedOnFields(template.fields),
     }),
   };
 }

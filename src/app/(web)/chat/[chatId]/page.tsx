@@ -1,3 +1,4 @@
+import { DocumentViewer } from "@/components/chat/document-viewer";
 import { ChatHeader } from "@/components/chat/header";
 import { HydrateChat } from "@/components/chat/hydrate-chat";
 import { Messages } from "@/components/chat/messages";
@@ -37,7 +38,7 @@ export default async function Page({
           <Messages />
           <Prompter />
         </div>
-        <div className="bg-accent aspect-[21/30] w-0 translate-x-full transition-all duration-500"></div>
+        <DocumentViewer />
       </div>
     </>
   );

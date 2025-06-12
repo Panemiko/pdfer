@@ -14,13 +14,21 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { ModelSelector } from "./model-selector";
-import { chatStateAtom, messagesAtom } from "./store";
+import {
+  chatStateAtom,
+  generatedDocumentValuesAtom,
+  messagesAtom,
+} from "./store";
 
 export function Prompter() {
-  const [chatState] = useAtom(chatStateAtom);
+  const [chatState, setChatState] = useAtom(chatStateAtom);
   const [internalMessages, setInternalMessages] = useAtom(messagesAtom);
+  const [, setGeneratedDocumentValues] = useAtom(generatedDocumentValuesAtom);
   const { mutateAsync: updateMessagesMutation } =
     api.chat.updateMessages.useMutation();
+  const { data, refetch } = api.chat.byId.useQuery({
+    chatId: chatState?.id ?? "",
+  });
   const { input, setInput, handleSubmit, handleInputChange, messages } =
     useChat({
       api: "/api/chat/message",
@@ -29,6 +37,19 @@ export function Prompter() {
         model: chatState?.model,
       },
       initialMessages: internalMessages,
+      async onToolCall({ toolCall }) {
+        if (toolCall.toolName === "updateChatTitle") {
+          await refetch();
+
+          if (data) {
+            setChatState({ ...data, model: data.model ?? "gemini-2.0-flash" });
+          }
+        }
+
+        if (toolCall.toolName === "generateDocument") {
+          setGeneratedDocumentValues(toolCall.args as Record<string, string>);
+        }
+      },
       async onFinish() {
         await updateMessagesMutation({
           chatId: chatState?.id ?? "",

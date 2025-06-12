@@ -1,8 +1,7 @@
-import { api } from "@/trpc/server";
 import { tool } from "ai";
 import { z } from "zod";
 
-export async function getTools(chatId: string) {
+export async function getTools() {
   return {
     updateChatTitle: tool({
       description:
@@ -11,12 +10,7 @@ export async function getTools(chatId: string) {
         title: z.string().min(1, "Title cannot be empty"),
       }),
       async execute({ title }) {
-        await api.chat.updateTitle({
-          chatId: chatId,
-          data: {
-            title,
-          },
-        });
+        console.log("Updating chat title to:", title);
       },
     }),
   };

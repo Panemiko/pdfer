@@ -110,15 +110,6 @@ model Chat {
     templateId String?
     template   Template? @relation(fields: [templateId], references: [id], onDelete: Cascade)
     title      String?
-    messages   Message[]
+    messages   Json      @default("[]")
     model      String?
-}
-
-model Message {
-    id        String   @id @default(cuid())
-    chatId    String
-    chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
-    content   String
-    role      String
-    createdAt DateTime @default(now())
 }

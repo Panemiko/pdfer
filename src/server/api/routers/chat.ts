@@ -1,3 +1,4 @@
+import type { JsonArray } from "@prisma/client/runtime/library";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
@@ -24,20 +25,7 @@ export const chatRouter = createTRPCRouter({
         data: {
           templateId: template.id,
           userId: ctx.session?.user.id ?? null,
-          messages: {
-            create: [
-              {
-                role: "system",
-                content: `
-                **Template name**
-                ${template.name}
-
-                **Template description**
-                ${template.description}
-              `,
-              },
-            ],
-          },
+          messages: [] as JsonArray,
         },
       });
     }),
@@ -52,9 +40,6 @@ export const chatRouter = createTRPCRouter({
       const chat = await ctx.db.chat.findUnique({
         where: { id: input.chatId },
         include: {
-          messages: {
-            orderBy: { createdAt: "asc" },
-          },
           template: {
             include: {
               fields: true,
@@ -87,7 +72,7 @@ export const chatRouter = createTRPCRouter({
 
       if (!chat) {
         throw new TRPCError({
-          code: "NOT_FOUND",
+          code: "FORBIDDEN",
         });
       }
 
@@ -95,6 +80,39 @@ export const chatRouter = createTRPCRouter({
         where: { id: input.chatId },
         data: {
           title: input.data.title,
+        },
+      });
+    }),
+
+  updateMessages: publicProcedure
+    .input(
+      z.object({
+        chatId: z.string().cuid2(),
+        data: z.object({
+          messages: z
+            .object({
+              role: z.enum(["user", "assistant", "system", "data"]),
+              content: z.string().min(1, "Message content cannot be empty"),
+            })
+            .array(),
+        }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const chat = await ctx.db.chat.findUnique({
+        where: { id: input.chatId },
+      });
+
+      if (!chat) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+        });
+      }
+
+      return await ctx.db.chat.update({
+        where: { id: input.chatId },
+        data: {
+          messages: input.data.messages as JsonArray,
         },
       });
     }),

@@ -24,12 +24,28 @@ export function Prompter() {
   async function sendMessage() {
     if (!chatState?.templateId) return;
 
+    // optimistically add the user message
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      {
+        id: crypto.randomUUID(),
+        content: input,
+        role: "user",
+        createdAt: new Date(),
+      },
+    ]);
+
     const createdMessage = await createMessage({
       chatId: chatState.id,
       content: input,
     });
 
-    setMessages((prevMessages) => [...prevMessages, createdMessage]);
+    setMessages((prevMessages) =>
+      prevMessages.splice(prevMessages.length - 1, 1, createdMessage),
+    );
+
+    const generatedMessageId = crypto.randomUUID();
+    const messageDate = new Date();
 
     try {
       const response = await fetch("/api/chat/message", {
@@ -47,22 +63,6 @@ export function Prompter() {
       if (!response.ok) {
         throw new Error("Failed to send message");
       }
-
-      await response.body?.pipeTo(
-        new WritableStream({
-          write: (chunk) => {
-            const text = new TextDecoder().decode(chunk);
-            setMessages((prevMessages) => [
-              ...prevMessages,
-              {
-                content: text,
-                role: "assistant",
-                createdAt: new Date(),
-              },
-            ]);
-          },
-        }),
-      );
     } catch (error) {
       console.error("Error sending message:", error);
     }

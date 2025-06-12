@@ -21,7 +21,7 @@ export function Initializer({
   }
 
   return (
-    <div className="absolute top-[calc(50%-350px)] left-[calc(50%+2.5rem)] w-full -translate-x-1/2">
+    <div className="absolute top-0 left-[calc(50%+2.5rem)] mt-20 w-full -translate-x-1/2">
       <h1 className="text-foreground mb-4 text-center text-3xl font-bold">
         Welcome!
       </h1>
@@ -50,7 +50,7 @@ export function Initializer({
 
                     router.push(`/chat/${chat.id}`);
                   }}
-                  className="border-border text-left hover:cursor-pointer group hover:bg-accent relative block w-full overflow-hidden rounded-md border px-6 py-8 transition-colors"
+                  className="border-border group hover:bg-accent relative block w-full overflow-hidden rounded-md border px-6 py-8 text-left transition-colors hover:cursor-pointer"
                 >
                   <span className="font-medium">{template.name}</span>
                   <p className="text-muted-foreground mt-1 text-sm">

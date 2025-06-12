@@ -14,7 +14,7 @@ export function Messages() {
   return (
     <div className="absolute top-0 left-[calc(50%+2.5rem)] flex h-full w-full max-w-4xl -translate-x-1/2 flex-col gap-4 overflow-y-auto p-4">
       {messagesFiltered.length === 0 && (
-        <div className="text-muted-foreground text-center text-sm">
+        <div className="text-muted-foreground text-center mt-20 text-sm">
           No messages yet. Feel free to start generating your documents!
         </div>
       )}
